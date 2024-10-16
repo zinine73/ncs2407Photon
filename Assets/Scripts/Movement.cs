@@ -43,7 +43,7 @@ public class Movement : MonoBehaviour
         cameraRight.y = 0.0f;
 
         Vector3 moveDir = (cameraForward * v) + (cameraRight * h);
-        moveDir.Set(moveDir.x, 0.0f, moveDir.y);
+        moveDir.Set(moveDir.x, 0.0f, moveDir.z);
 
         controller.SimpleMove(moveDir * moveSpeed);
 
