@@ -18,7 +18,7 @@ public class Movement : MonoBehaviour, IPunObservable
     private Vector3 hitPoint;
 
     private PhotonView pv;
-    private CinemachineVirtualCamera virtualCamera;
+    private CinemachineVirtualCamera virtualCamera = null;
 
     public float moveSpeed = 10.0f;
 
@@ -36,7 +36,7 @@ public class Movement : MonoBehaviour, IPunObservable
         pv = GetComponent<PhotonView>();
         virtualCamera = GameObject.FindObjectOfType<CinemachineVirtualCamera>();
 
-        if (pv.IsMine)
+        if (pv.IsMine && virtualCamera != null)
         {
             virtualCamera.Follow = transform;
             virtualCamera.LookAt = transform;
