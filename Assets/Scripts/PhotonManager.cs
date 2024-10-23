@@ -12,6 +12,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public TMP_InputField userIF;
     public TMP_InputField roomNameIF;
 
+    private Dictionary<string, GameObject> rooms = new Dictionary<string, GameObject>();
+    private GameObject roomItemPrefab;
+    public Transform scrollContent;
+
     void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -20,7 +24,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         Debug.Log(PhotonNetwork.SendRate);
 
-        PhotonNetwork.ConnectUsingSettings();
+        roomItemPrefab = Resources.Load<GameObject>("RoomItem");
+
+        if (PhotonNetwork.IsConnected == false)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
     }
 
     private void Start()
@@ -121,5 +130,34 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.CreateRoom(SetRoomName(), ro);
     }
-#endregion
+    #endregion
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        GameObject tempRoom = null;
+        foreach (var roomInfo in roomList)
+        {
+            if (roomInfo.RemovedFromList == true)
+            {
+                rooms.TryGetValue(roomInfo.Name, out tempRoom);
+                Destroy(tempRoom);
+                rooms.Remove(roomInfo.Name);
+            }
+            else
+            {
+                if (rooms.ContainsKey(roomInfo.Name) == false)
+                {
+                    GameObject roomPrefab = Instantiate(roomItemPrefab, scrollContent);
+                    //roomPrefab.GetComponent<RoomData>().RoomInfo = roomInfo;
+                    rooms.Add(roomInfo.Name, roomPrefab);
+                }
+                else
+                {
+                    rooms.TryGetValue(roomInfo.Name, out tempRoom);
+                    //tempRoom.GetComponent<RoomData>().RoomInfo = roomInfo;
+                }
+            }
+            Debug.Log($"Room={roomInfo.Name} ({roomInfo.PlayerCount}/{roomInfo.MaxPlayers})");
+        }
+    }
 }
