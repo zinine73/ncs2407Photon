@@ -148,13 +148,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
                 if (rooms.ContainsKey(roomInfo.Name) == false)
                 {
                     GameObject roomPrefab = Instantiate(roomItemPrefab, scrollContent);
-                    //roomPrefab.GetComponent<RoomData>().RoomInfo = roomInfo;
+                    roomPrefab.GetComponent<RoomData>().RoomInfo = roomInfo;
                     rooms.Add(roomInfo.Name, roomPrefab);
                 }
                 else
                 {
                     rooms.TryGetValue(roomInfo.Name, out tempRoom);
-                    //tempRoom.GetComponent<RoomData>().RoomInfo = roomInfo;
+                    tempRoom.GetComponent<RoomData>().RoomInfo = roomInfo;
                 }
             }
             Debug.Log($"Room={roomInfo.Name} ({roomInfo.PlayerCount}/{roomInfo.MaxPlayers})");
