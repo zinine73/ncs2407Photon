@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Fire : MonoBehaviour
 {
@@ -21,17 +22,21 @@ public class Fire : MonoBehaviour
     {
         if (pv.IsMine && isMouseClick)
         {
-            //FireBullet();
-            pv.RPC("FireBullet", RpcTarget.All, null);
+            if (SceneManager.GetActiveScene().buildIndex != 0)
+            {
+                FireBullet(pv.Owner.ActorNumber);
+                pv.RPC("FireBullet", RpcTarget.Others, pv.Owner.ActorNumber);
+            }
         }
     }
 
     [PunRPC]
-    void FireBullet()
+    public void FireBullet(int actorNo)
     {
         if (!muzzleFlash.isPlaying) muzzleFlash.Play(true);
-        GameObject billet = Instantiate(bulletPrefab,
+        GameObject bullet = Instantiate(bulletPrefab,
                                     firePos.position,
                                     firePos.rotation);
+        bullet.GetComponent<Bullet>().actorNumber = actorNo;
     }
 }
